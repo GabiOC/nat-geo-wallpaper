@@ -1,6 +1,6 @@
 require_relative '../bin/environment.rb'
 
-class Scraper
+class ImageOfTheDay
   def scrape
     f = open('http://photography.nationalgeographic.com/photo-of-the-day/')
     doc = Nokogiri::HTML(f)
@@ -8,6 +8,11 @@ class Scraper
     url = doc.css(".primary_photo a img").attr("src").value.prepend("http:")
     delete_old_image
     save_image(url)
+    set_wallpaper
+  end
+
+  def delete_old_image
+    FileUtils.rm_rf(Dir.glob("tmp/image.jpg")) unless File.exist? "tmp/image.jpg"
   end
 
   def save_image(url)
@@ -15,15 +20,9 @@ class Scraper
     image.write("tmp/image.jpg")
   end
 
-  def delete_old_image
-    FileUtils.rm_rf(Dir.glob("tmp/image.jpg")) unless File.exist? "tmp/image.jpg"
-  end
-
   def set_wallpaper
-    cmd = "sqlite3 ~/Library/Application\ Support/Dock/desktoppicture.db 'update data set value = \"/Users/gabrieleoconnor/workspace/nat-geo-wallpaper/tmp/image.jpg\"'"
+    path = File.absolute_path("tmp/image.jpg")
+    cmd = %q[sqlite3 ~/Library/Application\ Support/Dock/desktoppicture.db 'update data set value = "#{path}"' && killall Dock]
     `#{cmd}`
   end
 end
-
-n = Scraper.new
-n.scrape
