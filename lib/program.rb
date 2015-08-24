@@ -1,6 +1,7 @@
 require_relative '../bin/environment.rb'
 
 class ImageOfTheDay
+
   def scrape
     f = open('http://photography.nationalgeographic.com/photo-of-the-day/')
     doc = Nokogiri::HTML(f)
@@ -22,7 +23,7 @@ class ImageOfTheDay
 
   def set_wallpaper
     path = File.absolute_path("tmp/image.jpg")
-    cmd = %q[sqlite3 ~/Library/Application\ Support/Dock/desktoppicture.db 'update data set value = "#{path}"' && killall Dock]
+    cmd = "sqlite3 ~/Library/Application\\ Support/Dock/desktoppicture.db \"update data set value = '#{path}'\" && killall Dock"
     `#{cmd}`
   end
 end
