@@ -13,7 +13,7 @@ class ImageOfTheDay
   end
 
   def delete_old_image
-    FileUtils.rm_rf(Dir.glob("tmp/image.jpg")) unless File.exist? "tmp/image.jpg"
+    FileUtils.rm_rf(Dir.glob("tmp/image.jpg")) if File.exist? "tmp/image.jpg"
   end
 
   def save_image(url)
