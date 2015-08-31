@@ -1,15 +1,20 @@
 require_relative '../bin/environment.rb'
 
 class ImageOfTheDay
+  attr_accessor :url
+
+  def run
+    scrape
+    delete_old_image
+    save_image(url)
+    set_wallpaper
+  end
 
   def scrape
     f = open('http://photography.nationalgeographic.com/photo-of-the-day/')
     doc = Nokogiri::HTML(f)
 
-    url = doc.css(".primary_photo a img").attr("src").value.prepend("http:")
-    delete_old_image
-    save_image(url)
-    set_wallpaper
+    @url = doc.css(".primary_photo a img").attr("src").value.prepend("http:")
   end
 
   def delete_old_image
